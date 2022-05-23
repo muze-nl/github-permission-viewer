@@ -1,0 +1,1 @@
+[{"action":"getOrgRepos","editor":"code","code":"function(organization) {\n  \treturn simplyDataApi.getOrgRepos(organization);\n}","tests":[]},{"action":"getOrgRepoMembers","editor":"code","code":"function(organization, repo) {\n  \treturn simplyDataApi.getOrgRepoMembers(organization, repo);\n}","tests":[]}]

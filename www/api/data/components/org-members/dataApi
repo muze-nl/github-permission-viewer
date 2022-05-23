@@ -1,0 +1,1 @@
+[{"method":"getOrgMembers","code":"function(organization) {\n  return simplyRawApi.get(\"/orgs/\" + organization + \"/members\")\n    .then(function(response) {\n    if (response.status === 200) {\n      return response.json();\n    }\n    throw new Error(\"getMembers failed\", response.status);\n  });\n}"}]
