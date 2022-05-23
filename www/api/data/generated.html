@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <!-- Component CSS -->
+    <style>
+    </style>
+    <!-- /Component CSS -->
+    <!-- Head HTML -->
+    <!-- base styles -->
+    <style>
+      body {
+        background-color: white;
+      }
+      main {
+        display:grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+      }
+      main > div.members,
+      main > div.teams,
+      main > div.repos {
+        border: 1px solid #888;
+      }
+      main h2 {
+        text-align: center;
+        margin: 10px;
+      }
+    </style>
+    <!-- /Head HTML -->
+    <script>
+      var simplyDataApi = {};
+      var simplyApp = {};
+      window.addEventListener("simply-content-loaded", function() {
+        simply.bind = false;
+        /* Raw API */
+        var simplyRawApi = {
+          url : "https://api.example.com",
+          headers : {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          encodeGetParams : function(params) {
+            if (!params) {
+              return "";
+            }
+            return "?" + (Object.entries(params).map(function(keyvalue) {
+              return keyvalue.map(encodeURIComponent).join("=")
+            }).join("&"));
+          },
+          get : function(endpoint, params={}) {
+            return fetch(simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params), {
+                mode : 'cors',
+                headers: this.headers
+            });
+          },
+          post : function(endpoint, params={}) {
+            return fetch(simplyRawApi.url + endpoint, {
+              mode : 'cors',
+              headers: this.headers,
+              method: "POST",
+              body: JSON.stringify(params, null, "\t")
+            });
+          },
+          postRaw : function(endpoint, params={}, body) {
+            return fetch(simplyRawApi.url + endpoint, {
+              mode : 'cors',
+              headers: this.headers,
+              method: "POST",
+              body: body
+            });
+          },
+          put : function(endpoint, params={}) {
+            return fetch(simplyRawApi.url + endpoint, {
+              mode: 'cors',
+              headers: this.headers,
+              method: "PUT",
+              body: JSON.stringify(params, null, "\t")
+            });
+          },
+          putRaw : function(endpoint, params={}, body) {
+            return fetch(simplyRawApi.url + endpoint, {
+              mode: 'cors',
+              headers: this.headers,
+              method: "PUT",
+              body: body
+            });
+          },
+          delete : function(endpoint, params={}) {
+            return fetch(simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params), {
+              mode : 'cors',
+              headers: this.headers,
+              method: "DELETE"
+            });
+          }
+        };
+        /* End of Raw API */
+        /* Data API */
+        simplyDataApi = {
+        };
+        /* End of Data API */
+        simplyApp = simply.app({
+          /* Actions */
+          actions: {
+          },
+          /* /Actions */
+          /* Commands */
+          commands: {
+          },
+          /* /Commands */
+          /* Routes */
+          routes: {
+          }
+          /* /Routes */
+        });
+        function clone(ob) {
+          return JSON.parse(JSON.stringify(ob));
+        }
+        function updateDataSource(name) {
+          document.querySelectorAll('[data-simply-data="'+name+'"]').forEach(function(list) {
+            editor.list.applyDataSource(list, name);
+            list.dataBindingPaused = 0;
+          });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <!-- Body HTML -->
+    <!-- /Body HTML -->
+    <!-- Component HTML templates -->
+    <!-- /Component HTML templates -->
+    <header data-simply-path="/" data-simply-field="header" data-simply-content="template" data-simply-default-value="Header">
+      <template data-simply-template='Header' rel="header"></template>
+    </header>
+    <nav>
+      <div is="simply-component" rel="menu"></div>
+    </nav>
+  <!-- FIXME: hier main van maken -->
+  <div class="main" data-simply-field="page" data-simply-content="template">
+    <!-- Page HTML templates -->
+    <!-- /Page HTML templates -->
+  </div>
+    <script src="/js/simply.everything.js"></script>
+    <script src="/js/simply-edit.js" data-api-key="muze"></script>
+    <script>
+      /* Transformers */
+      editor.transformers = {
+      };
+      /* /Transformers */
+    </script>
+    <script>
+      // load sorters
+    </script>
+    <script>
+      window.addEventListener("simply-content-loaded", function() {
+      // load datasources
+      });
+    </script>
+    <!-- Foot HTML -->
+    <!-- /Foot HTML -->
+  </body>
+</html>
