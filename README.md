@@ -1,6 +1,5 @@
 # GitHub Permission Viewer
 
-
 [![Muze][muze-shield]][muze-site]
 [![License][license-shield]][license-link]
 [![standard-readme compliant][standard-readme-shield]][standard-readme-link]
@@ -36,11 +35,11 @@ The project structure looks like this:
 ├── lib
 └── www
     ├── api
-    │   └── data
+    │   └── data
     ├── css
     ├── data
     ├── files
-    │   └── simply-build
+    │   └── simply-build
     ├── img
     ├── js
     ├── simply-code
@@ -55,17 +54,17 @@ The application specific files ad folders are stored in `www/api/data`:
 .
 └── www
     └── api
-        └── data
-            ├── base-components
-            │   ├── base-styles
-            │   └── raw-api
-            ├── components
-            │   ├── org-members
-            │   ├── org-repos
-            │   └── org-teams
-            └── pages
-                ├── home
-                └── team
+        └── data
+            ├── base-components
+            │   ├── base-styles
+            │   └── raw-api
+            ├── components
+            │   ├── org-members
+            │   ├── org-repos
+            │   └── org-teams
+            └── pages
+                ├── home
+                └── team
 ```
 
 ## Contributing

@@ -1,5 +1,7 @@
 <?php
-	ini_set('display_errors', 1);
+
+/** @noinspection PhpMultipleClassDeclarationsInspection */
+ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
 	require_once('../../lib/config.php');
@@ -28,7 +30,7 @@
 					if (is_dir($realfile)) {
 						$files = scandir($realfile);
 						$files = array_filter($files, function($file) {
-							if ($file == '.' || $file == '..') {
+							if ($file === '.' || $file === '..') {
 								return false;
 							}
 							return true;
@@ -54,9 +56,9 @@
 						$result['id'] = $filename;
 
                                                 $result['ctime'] = filesystem::ctime($dirname, $filename);
-                                                $result['ctime-human'] = strftime("%c", $data['ctime']);
+                                                $result['ctime-human'] = strftime("%c", $result['ctime']);
                                                 $result['mtime'] = filesystem::mtime($dirname, $filename);
-                                                $result['mtime-human'] = strftime("%c", $data['mtime']);
+                                                $result['mtime-human'] = strftime("%c", $result['mtime']);
 				                $result['contents'] = filesystem::read($dirname, $filename);
 						output($result, 200);
 					} else {
@@ -85,7 +87,7 @@
 				if (filesystem::put($dirname, $filename)) {
 					output('ok',200);
 				} else {
-					error(new \Exception("unexpected result from write",501));
+					error(new \Exception("unexpected result from write",500));
 				}
 			break;
 			case 'DELETE':
@@ -123,7 +125,7 @@
 	}
 
 	function error($e) {
-		output(["error" => $e->getCode(), "message" => $e->getMessage()], 501);		
+		output(["error" => $e->getCode(), "message" => $e->getMessage()], 500);
 	}
 
 	function filenotfound($path) {

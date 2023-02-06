@@ -4,6 +4,35 @@
     <meta charset="utf-8">
     <!-- Component CSS -->
     <style>
+      /* orgs */
+      ol.orgs {
+        padding: 10px;
+      }
+      ol.orgs li {
+        list-style: none;
+      }
+      ol.orgs a {
+        text-decoration: none;
+      }
+      ol.orgs .org {
+        display: grid;
+        grid-template-columns: 74px 1fr;
+        border-radius: 5px;
+        border: 1px solid #aaa;
+        overflow: hidden;
+        background-color: #eee;
+        margin-bottom: 10px;
+      }
+      ol.orgs img.avatar {
+        width: 64px;
+      }
+      ol.orgs .org .name {
+        color: #333;
+        font-size: 150%;
+        line-height: 200%;
+        padding-top: 10px;
+      }
+
       /* org-members */
       ol.members {
         padding: 10px;
@@ -177,91 +206,73 @@
               headers: this.headers,
               method: "DELETE"
             });
+          },
+          processJsonResponse: function(response, call = 'Call') {
+            if (response.status === 200) {
+              // @FIXME: Add handling for paging!
+              /*
+                let link = response.headers.get("link");
+                if (link) {
+                  let linkInfo = link.split(",");
+                  linkInfo.forEach(function(linkItem) {
+                    let parts = linkItem.split(";");
+                    if (parts[1].trim() == 'rel="next"') {
+                      let url = parts[0].replace("<", "").replace(">", "");
+                      alert(url);
+                    }
+                  });
+                  // Call self again? Or call rawApi? How do we know?
+                }
+                return response;
+            .then(function(response) {})
+            */
+              return response.json();
+            } else {
+              throw new Error(`${call} failed (${response.status})`);
+            }
           }
         };
         /* End of Raw API */
         /* Data API */
         simplyDataApi = {
+          getOrgs : function() {
+            return simplyRawApi.get("/user/orgs")
+          },
           getOrgMembers : function(organization) {
             return simplyRawApi.get("/orgs/" + organization + "/members")
-              .then(function(response) {
-              if (response.status === 200) {
-                return response.json();
-              }
-              throw new Error("getMembers failed", response.status);
-            });
+              .then(response => simplyRawApi.processJsonResponse(response, "getMembers"));
           },
           getOrgRepos : function(organization) {
-            // FIXME: Add handling for paging;
-            /*
-              .then(function(response) {
-              let link = response.headers.get("link");
-              if (link) {
-                let linkInfo = link.split(",");
-                linkInfo.forEach(function(linkItem) {
-                  let parts = linkItem.split(";");
-                  if (parts[1].trim() == 'rel="next"') {
-                    let url = parts[0].replace("<", "").replace(">", "");
-                    alert(url);
-                  }
-                });
-              }
-              return response;
-            })
-          */
-            
             return simplyRawApi.get("/orgs/" + organization + "/repos", {"per_page" : 100})
-            .then(function(response) {
-              if (response.status === 200) {
-                return response.json();
-              }
-              throw new Error("getOrgRepos failed", response.status);
-            });
+            .then(response => simplyRawApi.processJsonResponse(response, "getOrgRepos"));
           },
           getOrgRepoMembers : function(organization, repo) {
             return simplyRawApi.get("/repos/" + organization + "/" + repo + "/collaborators", {
               "affiliation" : "direct",
               "per_page" : 100
             })
-            .then(function(response) {
-              if (response.status === 200) {
-                return response.json();
-              }
-              throw new Error("getOrgRepoMembers failed", response.status);
-            });
+            .then(response => simplyRawApi.processJsonResponse(response, "getOrgRepoMembers"));
           },
           getOrgTeams : function(organization) {
             return simplyRawApi.get("/orgs/" + organization + "/teams")
-              .then(function(response) {
-              if (response.status === 200) {
-                return response.json();
-              }
-              throw new Error("getOrgTeams failed", response.status);
-            });
+              .then(response => simplyRawApi.processJsonResponse(response, "getOrgTeams"));
           },
           getTeamRepos : function(organization, team) {
             return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/repos")
-              .then(function(response) {
-              if (response.status === 200) {
-                return response.json();
-              }
-              throw new Error("getTeamRepos failed", response.status);
-            });
+              .then(response => simplyRawApi.processJsonResponse(response, "getTeamRepos"));
           },
           getTeamMembers : function(organization, team) {
             return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/members")
-              .then(function(response) {
-              if (response.status === 200) {
-                return response.json();
-              }
-              throw new Error("getTeamMembers failed", response.status);
-            });
-          }
+              .then(response => simplyRawApi.processJsonResponse(response, "getTeamMembers"));
+          },
         };
         /* End of Data API */
         simplyApp = simply.app({
           /* Actions */
           actions: {
+            getOrgs : function() {
+                return simplyDataApi.getOrgs();
+            },
             getOrgMembers : function(organization) {
                 return simplyDataApi.getOrgMembers(organization);
             },
@@ -284,6 +295,15 @@
           /* /Actions */
           /* Commands */
           commands: {
+            storeAuth: function (form, values) {
+              simplyRawApi.headers.Authorization = 'token ' + values['github-pat']
+
+              return simplyApp.actions.getOrgs()
+                .then(function(orgs) {
+                  // @TODO: Sort orgs alphabetically
+                  editor.pageData.orgs = orgs;
+              });
+            }
           },
           /* /Commands */
           /* Routes */
@@ -301,6 +321,7 @@
             },
             "#org/:organization" : function(params) {
               editor.pageData.pageParams = params;
+              // @FIXME: Set an UI element that states "Fetching Data", otherwise the app looks crashed / frozen
               Promise.all([
                 simplyApp.actions.getOrgMembers(params.organization),
                 simplyApp.actions.getOrgTeams(params.organization),
@@ -358,18 +379,23 @@
                   editor.pageData.orgMembers = orgMembers;
                   editor.pageData.orgRepos = orgRepos;
                   editor.pageData.orgTeams = orgTeams;
-                  editor.pageData.page = "home";
+                  editor.pageData.page = "org";
               });
             },
             "/" : function(params) {
               editor.pageData.page = "home";
             }
-          }
+          },
           /* /Routes */
+          view: {
+            auth: ''
+          }
         });
+
         function clone(ob) {
           return JSON.parse(JSON.stringify(ob));
         }
+
         function updateDataSource(name) {
           document.querySelectorAll('[data-simply-data="'+name+'"]').forEach(function(list) {
             editor.list.applyDataSource(list, name);
@@ -383,6 +409,24 @@
     <!-- Body HTML -->
     <!-- /Body HTML -->
     <!-- Component HTML templates -->
+    <template id="orgs">
+      <!-- @TODO: Add filter field, so user can more easily find their org -->
+      <ol class="orgs" data-simply-list="orgs">
+        <template>
+          <li>
+            <a class="org"
+              href="#"
+              data-simply-field="login"
+              data-simply-transformer="orgLink"
+              data-simply-content="fixed"
+            >
+              <img class="avatar" src="" data-simply-field="avatar_url">
+              <span class="name" data-simply-field="login"></span>
+            </a>
+          </li>
+        </template>
+      </ol>
+    </template>
     <template id="org-members">
       <ol class="members" data-simply-list="orgMembers">
         <template>
@@ -399,7 +443,6 @@
           </li>
         </template>
       </ol>
-      
     </template>
     <template id="org-repos">
       <ol class="repos" data-simply-list="orgRepos">
@@ -440,11 +483,34 @@
     <nav>
       <div is="simply-component" rel="menu"></div>
     </nav>
-  <!-- FIXME: hier main van maken -->
   <div class="main" data-simply-field="page" data-simply-content="template">
     <!-- Page HTML templates -->
     <template data-simply-template="home">
-        <h1>Github permissions</h1>
+      <h1><a href="#">Github permissions</a></h1>
+      <main>
+        <!-- @FIXME: When landing on a sub-page without a PAT given, ask for the PAT before rest of logic is handled! -->
+        <!-- @TODO: This should be a separate template, so it can be used from any page -->
+        <!-- @TODO: This should be collapsible so it is not shown when already filled-->
+        <!-- @TODO: This should be filled if value has already been given-->
+        <div class="auth">
+          <h2>Please Authenticate Yourself</h2>
+          <form data-simply-command="storeAuth" method="post">
+            <label>
+              Person Authentication Token (PAT)
+              <input type="text" id="github-pat" name="github-pat" data-simply-field="auth">
+            </label>
+            <button>Fetch Organisations</button>
+          </form>
+        </div>
+
+        <div class="members">
+          <h2>Organisations</h2>
+          <div is="simply-component" rel="orgs"></div>
+        </div>
+      </main>
+    </template>
+    <template data-simply-template="org">
+        <h1><a href="#">Github permissions</a></h1>
         <main>
           <div class="members">
             <h2>Organization Members</h2>
@@ -461,7 +527,7 @@
         </main>
     </template>
     <template data-simply-template="team">
-        <h1>Github permissions</h1>
+        <h1><a href="#">Github permissions</a></h1>
         <main>
           <div class="members">
             <h2>Team Members</h2>
@@ -480,16 +546,24 @@
     <script>
       /* Transformers */
       editor.transformers = {
-      "teamLink" : {
-        render : function(data) {
+        "orgLink": {
+          render: function (data) {
             this.simplyData = data;
-            return "#org/" + editor.pageData.pageParams.organization + "/team/" + data;
-          }
-          ,
-        extract : function(data) {
+            return "#org/" + data;
+          },
+          extract: function (data) {
             return this.simplyData;
           }
-      }
+        },
+        "teamLink": {
+          render: function (data) {
+            this.simplyData = data;
+            return "#org/" + editor.pageData.pageParams.organization + "/team/" + data;
+          },
+          extract: function (data) {
+            return this.simplyData;
+          }
+        }
       };
       /* /Transformers */
     </script>
