@@ -1,581 +1,593 @@
 <!DOCTYPE HTML>
-<html lang="nl">
-  <head>
-    <meta charset="utf-8">
-    <!-- Component CSS -->
-    <style>
-      /* orgs */
-      ol.orgs {
-        padding: 10px;
-      }
-      ol.orgs li {
-        list-style: none;
-      }
-      ol.orgs a {
-        text-decoration: none;
-      }
-      ol.orgs .org {
-        display: grid;
-        grid-template-columns: 74px 1fr;
-        border-radius: 5px;
-        border: 1px solid #aaa;
-        overflow: hidden;
-        background-color: #eee;
-        margin-bottom: 10px;
-      }
-      ol.orgs img.avatar {
-        width: 64px;
-      }
-      ol.orgs .org .name {
-        color: #333;
-        font-size: 150%;
-        line-height: 200%;
-        padding-top: 10px;
-      }
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Component CSS -->
+<style>
 
-      /* org-members */
-      ol.members {
+    /* org-members */
+    ol.members {
         padding: 10px;
-      }
-      ol.members .member {
+    }
+
+    ol.members .member {
         display: grid;
         grid-template-columns: 74px 1fr;
         border-radius: 5px;
         border: 1px solid #aaa;
         overflow: hidden;
-      }
-      ol.members img.avatar {
+    }
+
+    ol.members img.avatar {
         width: 64px;
-      }
-      ol.members .member .teams {
+    }
+
+    ol.members .member .teams {
         padding: 10px 0px;
-      }
-      ol.members .member .team {
+    }
+
+    ol.members .member .team {
         background-color: #ddd;
         padding: 5px;
-        border-radius: 5px;  
-      }
-      ol.members .member .teams.simply-empty:before {
+        border-radius: 5px;
+    }
+
+    ol.members .member .teams.simply-empty:before {
         content: "none";
         background-color: #f88;
         padding: 5px;
-        border-radius: 5px;  
-      }
-      ol.members .member {
+        border-radius: 5px;
+    }
+
+    ol.members .member {
         background-color: #eee;
         margin-bottom: 10px;
-      }
-      /* repo */
-      ol.repos {
+    }
+
+    /* repo */
+    ol.repos {
         padding: 10px;
-      }
-      ol.repos .repo {
+    }
+
+    ol.repos .repo {
         border-radius: 5px;
         border: 1px solid #aaa;
         overflow: hidden;
         padding: 5px;
-      }
-      ol.repos .repo .teams {
+    }
+
+    ol.repos .repo .teams {
         padding: 10px 0px;
-      }
-      ol.repos .repo .team {
+    }
+
+    ol.repos .repo .team {
         background-color: #ddd;
         padding: 5px;
-        border-radius: 5px;  
-      }
-      ol.repos .repo .teams.simply-empty:before {
+        border-radius: 5px;
+    }
+
+    ol.repos .repo .teams.simply-empty:before {
         content: "No team";
         background-color: #f88;
         padding: 5px;
         border-radius: 5px;
         display: inline-block;
         margin-bottom: 5px;
-      }
-      ol.repos .repo {
+    }
+
+    ol.repos .repo {
         background-color: #eee;
         margin-bottom: 10px;
-      }
-      
-      ol.repos .repo .members:not(.simply-empty) {
+    }
+
+    ol.repos .repo .members:not(.simply-empty) {
         background-color: white;
         padding: 10px;
         border-radius: 5px;
-      }
-      ol.repos .repo .members:not(.simply-empty):before {
+    }
+
+    ol.repos .repo .members:not(.simply-empty):before {
         content: "Direct collaborators:";
         display: block;
         background-color: white;
-      }
-      ol.repos .repo .members.simply-empty {
+    }
+
+    ol.repos .repo .members.simply-empty {
         display: none;
-      }
-      ol.repos .repo .member {
+    }
+
+    ol.repos .repo .member {
         display: grid;
         grid-template-columns: 1fr 1fr;
         border-bottom: 1px solid #aaa;
-      }
-      ol.repos .repo .member:last-child {
+    }
+
+    ol.repos .repo .member:last-child {
         border-bottom: 0;
-      }
-    </style>
-    <!-- /Component CSS -->
-    <!-- Head HTML -->
-    <!-- base styles -->
-    <style>
-      body {
+    }
+
+</style>
+<!-- /Component CSS -->
+
+<!-- Page CSS -->
+<style>
+
+</style>
+<!-- /Page CSS -->
+
+<!-- Head HTML -->
+
+<!-- base styles -->
+<style>
+    body {
         background-color: white;
-      }
-      main {
-        display:grid;
+    }
+
+    main {
+        display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         gap: 10px;
-      }
-      main > div.members,
-      main > div.teams,
-      main > div.repos {
+    }
+
+    main > div.members,
+    main > div.teams,
+    main > div.repos {
         border: 1px solid #888;
-      }
-      main h2 {
+    }
+
+    main h2 {
         text-align: center;
         margin: 10px;
-      }
-    </style>
-    <!-- /Head HTML -->
-    <script>
-      var simplyDataApi = {};
-      var simplyApp = {};
-      window.addEventListener("simply-content-loaded", function() {
+    }
+</style>
+
+<!-- /Head HTML -->
+
+<script>
+    var simplyDataApi = {};
+    var simplyApp = {};
+    window.addEventListener("simply-content-loaded", function () {
         simply.bind = false;
+
         /* Raw API */
         var simplyRawApi = {
-          url : "https://api.github.com",
-          headers : {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'token ghp_0abc1def2ghi3jkl4mno5pqr6stu7vwx8yz9'
-          },
-          encodeGetParams : function(params) {
-            if (!params) {
-              return "";
-            }
-            return "?" + (Object.entries(params).map(function(keyvalue) {
-              return keyvalue.map(encodeURIComponent).join("=")
-            }).join("&"));
-          },
-          get : function(endpoint, params={}) {
-            return fetch(simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params), {
-                mode : 'cors',
-                headers: this.headers
-            });
-          },
-          post : function(endpoint, params={}) {
-            return fetch(simplyRawApi.url + endpoint, {
-              mode : 'cors',
-              headers: this.headers,
-              method: "POST",
-              body: JSON.stringify(params, null, "\t")
-            });
-          },
-          postRaw : function(endpoint, params={}, body) {
-            return fetch(simplyRawApi.url + endpoint, {
-              mode : 'cors',
-              headers: this.headers,
-              method: "POST",
-              body: body
-            });
-          },
-          put : function(endpoint, params={}) {
-            return fetch(simplyRawApi.url + endpoint, {
-              mode: 'cors',
-              headers: this.headers,
-              method: "PUT",
-              body: JSON.stringify(params, null, "\t")
-            });
-          },
-          putRaw : function(endpoint, params={}, body) {
-            return fetch(simplyRawApi.url + endpoint, {
-              mode: 'cors',
-              headers: this.headers,
-              method: "PUT",
-              body: body
-            });
-          },
-          delete : function(endpoint, params={}) {
-            return fetch(simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params), {
-              mode : 'cors',
-              headers: this.headers,
-              method: "DELETE"
-            });
-          },
-          processJsonResponse: function(response, call = 'Call') {
-            if (response.status === 200) {
-              // @FIXME: Add handling for paging!
-              /*
-                let link = response.headers.get("link");
-                if (link) {
-                  let linkInfo = link.split(",");
-                  linkInfo.forEach(function(linkItem) {
-                    let parts = linkItem.split(";");
-                    if (parts[1].trim() == 'rel="next"') {
-                      let url = parts[0].replace("<", "").replace(">", "");
-                      alert(url);
-                    }
-                  });
-                  // Call self again? Or call rawApi? How do we know?
+
+            delete: function (endpoint, params = {}) {
+                return fetch(simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params), {
+                    mode: 'cors',
+                    headers: this.headers,
+                    method: "DELETE"
+                });
+            },
+
+            encodeGetParams: function (params) {
+                if ( ! params) {
+                    return "";
                 }
-                return response;
-            .then(function(response) {})
-            */
-              return response.json();
-            } else {
-              throw new Error(`${call} failed (${response.status})`);
-            }
-          }
+                return "?" + (Object.entries(params).map(function (keyvalue) {
+                    return keyvalue.map(encodeURIComponent).join("=")
+                }).join("&"));
+            },
+
+            get: function (endpoint, params = {}) {
+                return fetch(simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params), {
+                    mode: 'cors',
+                    headers: this.headers
+                });
+            },
+
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'token ghp_0abc1def2ghi3jkl4mno5pqr6stu7vwx8yz9'
+            },
+
+            post: function (endpoint, params = {}) {
+                return fetch(simplyRawApi.url + endpoint, {
+                    mode: 'cors',
+                    headers: this.headers,
+                    method: "POST",
+                    body: JSON.stringify(params, null, "\t")
+                });
+            },
+
+            postRaw: function (endpoint, params = {}, body) {
+                return fetch(simplyRawApi.url + endpoint, {
+                    mode: 'cors',
+                    headers: this.headers,
+                    method: "POST",
+                    body: body
+                });
+            },
+
+            put: function (endpoint, params = {}) {
+                return fetch(simplyRawApi.url + endpoint, {
+                    mode: 'cors',
+                    headers: this.headers,
+                    method: "PUT",
+                    body: JSON.stringify(params, null, "\t")
+                });
+            },
+
+            putRaw: function (endpoint, params = {}, body) {
+                return fetch(simplyRawApi.url + endpoint, {
+                    mode: 'cors',
+                    headers: this.headers,
+                    method: "PUT",
+                    body: body
+                });
+            },
+
+            url: "https://api.github.com"
+
         };
         /* End of Raw API */
+
         /* Data API */
         simplyDataApi = {
-          getOrgs : function() {
-            return simplyRawApi.get("/user/orgs")
-          },
-          getOrgMembers : function(organization) {
-            return simplyRawApi.get("/orgs/" + organization + "/members")
-              .then(response => simplyRawApi.processJsonResponse(response, "getMembers"));
-          },
-          getOrgRepos : function(organization) {
-            return simplyRawApi.get("/orgs/" + organization + "/repos", {"per_page" : 100})
-            .then(response => simplyRawApi.processJsonResponse(response, "getOrgRepos"));
-          },
-          getOrgRepoMembers : function(organization, repo) {
-            return simplyRawApi.get("/repos/" + organization + "/" + repo + "/collaborators", {
-              "affiliation" : "direct",
-              "per_page" : 100
-            })
-            .then(response => simplyRawApi.processJsonResponse(response, "getOrgRepoMembers"));
-          },
-          getOrgTeams : function(organization) {
-            return simplyRawApi.get("/orgs/" + organization + "/teams")
-              .then(response => simplyRawApi.processJsonResponse(response, "getOrgTeams"));
-          },
-          getTeamRepos : function(organization, team) {
-            return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/repos")
-              .then(response => simplyRawApi.processJsonResponse(response, "getTeamRepos"));
-          },
-          getTeamMembers : function(organization, team) {
-            return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/members")
-              .then(response => simplyRawApi.processJsonResponse(response, "getTeamMembers"));
-          },
+
+            getOrgMembers: function (organization) {
+                return simplyRawApi.get("/orgs/" + organization + "/members")
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error("getMembers failed", response.status);
+                });
+            },
+
+            getOrgRepoMembers: function (organization, repo) {
+                return simplyRawApi.get("/repos/" + organization + "/" + repo + "/collaborators", {
+                    "affiliation": "direct",
+                    "per_page": 100
+                })
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error("getOrgRepoMembers failed", response.status);
+                });
+            },
+
+            getOrgRepos: function (organization) {
+                // FIXME: Add handling for paging;
+                /*
+                  .then(function(response) {
+                  let link = response.headers.get("link");
+                  if (link) {
+                    let linkInfo = link.split(",");
+                    linkInfo.forEach(function(linkItem) {
+                      let parts = linkItem.split(";");
+                      if (parts[1].trim() == 'rel="next"') {
+                        let url = parts[0].replace("<", "").replace(">", "");
+                        alert(url);
+                      }
+                    });
+                  }
+                  return response;
+                })
+              */
+                return simplyRawApi.get("/orgs/" + organization + "/repos", {"per_page": 100})
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error("getOrgRepos failed", response.status);
+                });
+            },
+
+            getOrgTeams: function (organization) {
+                return simplyRawApi.get("/orgs/" + organization + "/teams")
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error("getOrgTeams failed", response.status);
+                });
+            },
+            getTeamRepos: function (organization, team) {
+                return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/repos")
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error("getTeamRepos failed", response.status);
+                });
+            },
+            getTeamMembers: function (organization, team) {
+                return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/members")
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error("getTeamMembers failed", response.status);
+                });
+            }
+
         };
         /* End of Data API */
-        simplyApp = simply.app({
-          /* Actions */
-          actions: {
-            getOrgs : function() {
-                return simplyDataApi.getOrgs();
-            },
-            getOrgMembers : function(organization) {
-                return simplyDataApi.getOrgMembers(organization);
-            },
-            getOrgRepos : function(organization) {
-                return simplyDataApi.getOrgRepos(organization);
-            },
-            getOrgRepoMembers : function(organization, repo) {
-                return simplyDataApi.getOrgRepoMembers(organization, repo);
-            },
-            getOrgTeams : function(organization) {
-                return simplyDataApi.getOrgTeams(organization);
-            },
-            getTeamRepos : function(organization, team) {
-                return simplyDataApi.getTeamRepos(organization, team);
-            },
-            getTeamMembers : function(organization, team) {
-                return simplyDataApi.getTeamMembers(organization, team);
-            }
-          },
-          /* /Actions */
-          /* Commands */
-          commands: {
-            storeAuth: function (form, values) {
-              simplyRawApi.headers.Authorization = 'token ' + values['github-pat']
 
-              return simplyApp.actions.getOrgs()
-                .then(function(orgs) {
-                  // @TODO: Sort orgs alphabetically
-                  editor.pageData.orgs = orgs;
-              });
-            }
-          },
-          /* /Commands */
-          /* Routes */
-          routes: {
-            "#org/:organization/team/:team" : function(params) {
-              editor.pageData.pageParams = params;
-              return  Promise.all([
-                simplyApp.actions.getTeamMembers(params.organization, params.team),
-                simplyApp.actions.getTeamRepos(params.organization, params.team)
-              ]).then(function([teamMembers, teamRepos]) {
-                editor.pageData.orgMembers = teamMembers;
-                editor.pageData.orgRepos = teamRepos;
-                editor.pageData.page = "team";
-              });
+        simplyApp = simply.app({
+
+            /* Actions */
+            actions: {
+
+                getOrgMembers: function (organization) {
+                    return simplyDataApi.getOrgMembers(organization);
+                },
+
+                getOrgRepoMembers: function (organization, repo) {
+                    return simplyDataApi.getOrgRepoMembers(organization, repo);
+                },
+
+                getOrgRepos: function (organization) {
+                    return simplyDataApi.getOrgRepos(organization);
+                },
+
+                getOrgTeams: function (organization) {
+                    return simplyDataApi.getOrgTeams(organization);
+                },
+
+                getTeamMembers: function (organization, team) {
+                    return simplyDataApi.getTeamMembers(organization, team);
+                },
+
+                getTeamRepos: function (organization, team) {
+                    return simplyDataApi.getTeamRepos(organization, team);
+                }
+
             },
-            "#org/:organization" : function(params) {
-              editor.pageData.pageParams = params;
-              // @FIXME: Set an UI element that states "Fetching Data", otherwise the app looks crashed / frozen
-              Promise.all([
-                simplyApp.actions.getOrgMembers(params.organization),
-                simplyApp.actions.getOrgTeams(params.organization),
-                simplyApp.actions.getOrgRepos(params.organization),
-              ])
-              .then(function([orgMembers, orgTeams, orgRepos]) {
-                orgTeams.forEach(function(team) {
-                  var teamSlug = team.slug;
-                  Promise.all([
-                    simplyApp.actions.getTeamMembers(params.organization, teamSlug),
-                    simplyApp.actions.getTeamRepos(params.organization, teamSlug)
-                  ]).then(function([teamMembers, teamRepos]) {
-                    teamMembers.forEach(function(teamMember) {
-                      orgMembers.forEach(function(orgMember) {
-                        if (teamMember.login == orgMember.login) {
-                          if (typeof orgMember.teams === "undefined") {
-                            orgMember.teams = [];
-                          }
-                          orgMember.teams.push({
-                            "team" : teamSlug
-                          });
-                        }
-                      });
+            /* /Actions */
+
+            /* Commands */
+            commands: {},
+            /* /Commands */
+
+            /* Routes */
+            routes: {
+
+                "#org/:organization/team/:team": function (params) {
+                    editor.pageData.pageParams = params;
+                    return Promise.all([
+                        simplyApp.actions.getTeamMembers(params.organization, params.team),
+                        simplyApp.actions.getTeamRepos(params.organization, params.team)
+                    ]).then(function ([teamMembers, teamRepos]) {
+                        editor.pageData.orgMembers = teamMembers;
+                        editor.pageData.orgRepos = teamRepos;
+                        editor.pageData.page = "team";
                     });
-            
-                    teamRepos.forEach(function(teamRepo) {
-                      orgRepos.forEach(function(orgRepo) {
-                        if (teamRepo.name == orgRepo.name) {
-                          if (typeof orgRepo.teams === "undefined") {
-                            orgRepo.teams = [];
-                          }
-                          orgRepo.teams.push({
-                            "team" : teamSlug
-                          });
-                        }
-                      });
+                },
+
+                "#org/:organization": function (params) {
+                    editor.pageData.pageParams = params;
+                    Promise.all([
+                        simplyApp.actions.getOrgMembers(params.organization),
+                        simplyApp.actions.getOrgTeams(params.organization),
+                        simplyApp.actions.getOrgRepos(params.organization),
+                    ])
+                    .then(function ([orgMembers, orgTeams, orgRepos]) {
+                        orgTeams.forEach(function (team) {
+                            var teamSlug = team.slug;
+                            Promise.all([
+                                simplyApp.actions.getTeamMembers(params.organization, teamSlug),
+                                simplyApp.actions.getTeamRepos(params.organization, teamSlug)
+                            ]).then(function ([teamMembers, teamRepos]) {
+                                teamMembers.forEach(function (teamMember) {
+                                    orgMembers.forEach(function (orgMember) {
+                                        if (teamMember.login == orgMember.login) {
+                                            if (typeof orgMember.teams === "undefined") {
+                                                orgMember.teams = [];
+                                            }
+                                            orgMember.teams.push({
+                                                "team": teamSlug
+                                            });
+                                        }
+                                    });
+                                });
+                                teamRepos.forEach(function (teamRepo) {
+                                    orgRepos.forEach(function (orgRepo) {
+                                        if (teamRepo.name == orgRepo.name) {
+                                            if (typeof orgRepo.teams === "undefined") {
+                                                orgRepo.teams = [];
+                                            }
+                                            orgRepo.teams.push({
+                                                "team": teamSlug
+                                            });
+                                        }
+                                    });
+                                });
+                            });
+                        });
+                        return [orgMembers, orgRepos, orgTeams];
+                    })
+                    .then(function ([orgMembers, orgRepos, orgTeams]) {
+                        orgRepos.forEach(function (repo) {
+                            var repoSlug = repo.name;
+                            var repo = repo;
+                            Promise.all([
+                                simplyApp.actions.getOrgRepoMembers(params.organization, repoSlug)
+                            ]).then(function ([repoMembers]) {
+                                repo.repoMembers = repoMembers;
+                            });
+                        });
+                        return [orgMembers, orgRepos, orgTeams];
+                    })
+                    .then(function ([orgMembers, orgRepos, orgTeams]) {
+                        editor.pageData.orgMembers = orgMembers;
+                        editor.pageData.orgRepos = orgRepos;
+                        editor.pageData.orgTeams = orgTeams;
+                        editor.pageData.page = "home";
                     });
-                  });
-                });
-                return [orgMembers, orgRepos, orgTeams];
-              })
-              .then(function([orgMembers, orgRepos, orgTeams]) {
-                orgRepos.forEach(function(repo) {
-                  var repoSlug = repo.name;
-                  var repo = repo;
-                  Promise.all([
-                    simplyApp.actions.getOrgRepoMembers(params.organization, repoSlug)
-                  ]).then(function([repoMembers]) {
-                    repo.repoMembers = repoMembers;
-                  });
-                });
-                return [orgMembers, orgRepos, orgTeams];
-              })
-              .then(function([orgMembers, orgRepos, orgTeams]) {
-                  editor.pageData.orgMembers = orgMembers;
-                  editor.pageData.orgRepos = orgRepos;
-                  editor.pageData.orgTeams = orgTeams;
-                  editor.pageData.page = "org";
-              });
-            },
-            "/" : function(params) {
-              editor.pageData.page = "home";
+                },
+
+                "/": function (params) {
+                    editor.pageData.page = "home";
+                }
+
             }
-          },
-          /* /Routes */
-          view: {
-            auth: ''
-          }
+            /* /Routes */
+
         });
 
         function clone(ob) {
-          return JSON.parse(JSON.stringify(ob));
+            return JSON.parse(JSON.stringify(ob));
         }
 
         function updateDataSource(name) {
-          document.querySelectorAll('[data-simply-data="'+name+'"]').forEach(function(list) {
-            editor.list.applyDataSource(list, name);
-            list.dataBindingPaused = 0;
-          });
+            document.querySelectorAll('[data-simply-data="' + name + '"]').forEach(function (list) {
+                editor.list.applyDataSource(list, name);
+                list.dataBindingPaused = 0;
+            });
         }
-      });
-    </script>
-  </head>
-  <body>
-    <!-- Body HTML -->
-    <!-- /Body HTML -->
-    <!-- Component HTML templates -->
-    <template id="orgs">
-      <!-- @TODO: Add filter field, so user can more easily find their org -->
-      <ol class="orgs" data-simply-list="orgs">
-        <template>
-          <li>
-            <a class="org"
-              href="#"
-              data-simply-field="login"
-              data-simply-transformer="orgLink"
-              data-simply-content="fixed"
-            >
-              <img class="avatar" src="" data-simply-field="avatar_url">
-              <span class="name" data-simply-field="login"></span>
-            </a>
-          </li>
-        </template>
-      </ol>
-    </template>
-    <template id="org-members">
-      <ol class="members" data-simply-list="orgMembers">
-        <template>
-          <li class="member">
-            <img class="avatar" src="" data-simply-field="avatar_url">
-            <div>
-              <span data-simply-field="login"></span>
-              <div class="teams" data-simply-list="teams">
-                <template>
-                  <span class="team" data-simply-field="team"></span>
-                </template>
-              </div>
-            </div>
-          </li>
-        </template>
-      </ol>
-    </template>
-    <template id="org-repos">
-      <ol class="repos" data-simply-list="orgRepos">
-        <template>
-          <li class="repo">
-            <h3 data-simply-field="name"></h3>
-            <div class="teams" data-simply-list="teams">
-              <template>
-                <span class="team" data-simply-field="team"></span>
-              </template>
-            </div>
-            <div class="members" data-simply-list="repoMembers">
-              <template>
-                <div class="member">
-                  <span data-simply-field="login"></span>
-                  <span class="role" data-simply-field="role_name"></span>
-                </div>
-              </template>
-            </div>
-          </li>
-        </template>
-      </ol>
-    </template>
-    <template id="org-teams">
-      <ol class="teams" data-simply-list="orgTeams">
-        <template>
-          <li class="team">
-            <a href="#" data-simply-field="slug" data-simply-transformer="teamLink" data-simply-content="fixed"><span data-simply-field="name"></span></a>
-          </li>
-        </template>
-      </ol>
-      
-    </template>
-    <!-- /Component HTML templates -->
-    <header data-simply-path="/" data-simply-field="header" data-simply-content="template" data-simply-default-value="Header">
-      <template data-simply-template='Header' rel="header"></template>
-    </header>
-    <nav>
-      <div is="simply-component" rel="menu"></div>
-    </nav>
-  <div class="main" data-simply-field="page" data-simply-content="template">
-    <!-- Page HTML templates -->
-    <template data-simply-template="home">
-      <h1><a href="#">Github permissions</a></h1>
-      <main>
-        <!-- @FIXME: When landing on a sub-page without a PAT given, ask for the PAT before rest of logic is handled! -->
-        <!-- @TODO: This should be a separate template, so it can be used from any page -->
-        <!-- @TODO: This should be collapsible so it is not shown when already filled-->
-        <!-- @TODO: This should be filled if value has already been given-->
-        <div class="auth">
-          <h2>Please Authenticate Yourself</h2>
-          <form data-simply-command="storeAuth" method="post">
-            <label>
-              Person Authentication Token (PAT)
-              <input type="text" id="github-pat" name="github-pat" data-simply-field="auth">
-            </label>
-            <button>Fetch Organisations</button>
-          </form>
-        </div>
 
-        <div class="members">
-          <h2>Organisations</h2>
-          <div is="simply-component" rel="orgs"></div>
-        </div>
-      </main>
-    </template>
-    <template data-simply-template="org">
-        <h1><a href="#">Github permissions</a></h1>
+    });
+</script>
+</head>
+<body>
+
+<!-- Body HTML -->
+
+<!-- /Body HTML -->
+
+<!-- Component HTML templates -->
+
+<template id="org-members">
+    <ol class="members" data-simply-list="orgMembers">
+        <template>
+            <li class="member">
+                <img class="avatar" src="" data-simply-field="avatar_url">
+                <div>
+                    <span data-simply-field="login"></span>
+                    <div class="teams" data-simply-list="teams">
+                        <template>
+                            <span class="team" data-simply-field="team"></span>
+                        </template>
+                    </div>
+                </div>
+            </li>
+        </template>
+    </ol>
+</template>
+
+<template id="org-repos">
+    <ol class="repos" data-simply-list="orgRepos">
+        <template>
+            <li class="repo">
+                <h3 data-simply-field="name"></h3>
+                <div class="teams" data-simply-list="teams">
+                    <template>
+                        <span class="team" data-simply-field="team"></span>
+                    </template>
+                </div>
+                <div class="members" data-simply-list="repoMembers">
+                    <template>
+                        <div class="member">
+                            <span data-simply-field="login"></span>
+                            <span class="role" data-simply-field="role_name"></span>
+                        </div>
+                    </template>
+                </div>
+            </li>
+        </template>
+    </ol>
+</template>
+
+<template id="org-teams">
+    <ol class="teams" data-simply-list="orgTeams">
+        <template>
+            <li class="team">
+                <a href="#" data-simply-field="slug" data-simply-transformer="teamLink" data-simply-content="fixed"><span
+                    data-simply-field="name"></span></a>
+            </li>
+        </template>
+    </ol>
+</template>
+
+<!-- /Component HTML templates -->
+
+<header data-simply-path="/" data-simply-field="header" data-simply-content="template"
+    data-simply-default-value="Header">
+    <template data-simply-template="Header" rel="header"></template>
+</header>
+<nav>
+    <div is="simply-component" rel="menu"></div>
+</nav>
+<div class="main" data-simply-field="page" data-simply-content="template">
+
+    <!-- Page HTML templates -->
+
+    <template data-simply-template="home">
+        <h1>Github permissions</h1>
         <main>
-          <div class="members">
-            <h2>Organization Members</h2>
-            <div is="simply-component" rel="org-members"></div>
-          </div>
-          <div class="teams">
-            <h2>Teams</h2>
-            <div is="simply-component" rel="org-teams"></div>
-          </div>
-          <div class="repos">
-            <h2>Repos</h2>
-            <div is="simply-component" rel="org-repos"></div>
-          </div>
+            <div class="members">
+                <h2>Organization Members</h2>
+                <div is="simply-component" rel="org-members"></div>
+            </div>
+            <div class="teams">
+                <h2>Teams</h2>
+                <div is="simply-component" rel="org-teams"></div>
+            </div>
+            <div class="repos">
+                <h2>Repos</h2>
+                <div is="simply-component" rel="org-repos"></div>
+            </div>
         </main>
     </template>
+
     <template data-simply-template="team">
-        <h1><a href="#">Github permissions</a></h1>
+        <h1>Github permissions</h1>
         <main>
-          <div class="members">
-            <h2>Team Members</h2>
-            <div is="simply-component" rel="org-members"></div>
-          </div>
-          <div class="repos">
-            <h2>Team repos</h2>
-            <div is="simply-component" rel="org-repos"></div>
-          </div>
+            <div class="members">
+                <h2>Team Members</h2>
+                <div is="simply-component" rel="org-members"></div>
+            </div>
+            <div class="repos">
+                <h2>Team repos</h2>
+                <div is="simply-component" rel="org-repos"></div>
+            </div>
         </main>
     </template>
+
     <!-- /Page HTML templates -->
-  </div>
-    <script src="/js/simply.everything.js"></script>
-    <script src="/js/simply-edit.js" data-api-key="muze"></script>
-    <script>
-      /* Transformers */
-      editor.transformers = {
-        "orgLink": {
-          render: function (data) {
-            this.simplyData = data;
-            return "#org/" + data;
-          },
-          extract: function (data) {
-            return this.simplyData;
-          }
-        },
+
+</div>
+<script src="js/simply.everything.js"></script>
+<script src="js/simply-edit.js" data-api-key="muze"></script>
+
+<script>
+    /* Transformers */
+    editor.transformers = {
+
         "teamLink": {
-          render: function (data) {
-            this.simplyData = data;
-            return "#org/" + editor.pageData.pageParams.organization + "/team/" + data;
-          },
-          extract: function (data) {
-            return this.simplyData;
-          }
+            render: function (data) {
+                this.simplyData = data;
+                return "#org/" + editor.pageData.pageParams.organization + "/team/" + data;
+            }
+            ,
+            extract: function (data) {
+                return this.simplyData;
+            }
         }
-      };
-      /* /Transformers */
-    </script>
-    <script>
-      // load sorters
-    </script>
-    <script>
-      window.addEventListener("simply-content-loaded", function() {
-      // load datasources
-      });
-    </script>
-    <!-- Foot HTML -->
-    <!-- /Foot HTML -->
-  </body>
+
+    };
+    /* /Transformers */
+</script>
+
+<script>
+    // load sorters
+</script>
+
+<script>
+    window.addEventListener("simply-content-loaded", function () {
+        /* Data sources */
+
+        /* /Data sources */
+    });
+</script>
+
+<!-- Foot HTML -->
+
+<!-- /Foot HTML -->
+
+</body>
 </html>

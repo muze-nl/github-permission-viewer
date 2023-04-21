@@ -1,0 +1,60 @@
+{
+  "orgTeams" : [
+    {
+      "name": "Dockerhub",
+      "id": 5687867,
+      "node_id": "T_kwDOAsVrnc4AVso7",
+      "slug": "dockerhub",
+      "description": "",
+      "privacy": "closed",
+      "url": "https://api.github.com/organizations/46492573/team/5687867",
+      "html_url": "https://github.com/orgs/novoserve/teams/dockerhub",
+      "members_url": "https://api.github.com/organizations/46492573/team/5687867/members{/member}",
+      "repositories_url": "https://api.github.com/organizations/46492573/team/5687867/repos",
+      "permission": "pull",
+      "parent": null
+    },
+    {
+      "name": "Zomro Employees",
+      "id": 6106778,
+      "node_id": "T_kwDOAsVrnc4AXS6a",
+      "slug": "zomro-employees",
+      "description": "Employees of the Zomro company",
+      "privacy": "closed",
+      "url": "https://api.github.com/organizations/46492573/team/6106778",
+      "html_url": "https://github.com/orgs/novoserve/teams/zomro-employees",
+      "members_url": "https://api.github.com/organizations/46492573/team/6106778/members{/member}",
+      "repositories_url": "https://api.github.com/organizations/46492573/team/6106778/repos",
+      "permission": "pull",
+      "parent": null
+    },
+    {
+      "name": "Cloudrack",
+      "id": 4055259,
+      "node_id": "MDQ6VGVhbTQwNTUyNTk=",
+      "slug": "cloudrack",
+      "description": "",
+      "privacy": "closed",
+      "url": "https://api.github.com/organizations/46492573/team/4055259",
+      "html_url": "https://github.com/orgs/novoserve/teams/cloudrack",
+      "members_url": "https://api.github.com/organizations/46492573/team/4055259/members{/member}",
+      "repositories_url": "https://api.github.com/organizations/46492573/team/4055259/repos",
+      "permission": "pull",
+      "parent": null
+    },
+    {
+      "name": "Employees",
+      "id": 5713556,
+      "node_id": "T_kwDOAsVrnc4AVy6U",
+      "slug": "employees",
+      "description": "All the humans will be members of this team",
+      "privacy": "closed",
+      "url": "https://api.github.com/organizations/46492573/team/5713556",
+      "html_url": "https://github.com/orgs/novoserve/teams/employees",
+      "members_url": "https://api.github.com/organizations/46492573/team/5713556/members{/member}",
+      "repositories_url": "https://api.github.com/organizations/46492573/team/5713556/repos",
+      "permission": "pull",
+      "parent": null
+    }
+  ]
+}

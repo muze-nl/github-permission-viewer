@@ -1,0 +1,20 @@
+<ol class="repos" data-simply-list="orgRepos">
+  <template>
+    <li class="repo">
+      <h3 data-simply-field="name"></h3>
+      <div class="teams" data-simply-list="teams">
+        <template>
+          <span class="team" data-simply-field="team"></span>
+        </template>
+      </div>
+      <div class="members" data-simply-list="repoMembers">
+        <template>
+          <div class="member">
+            <span data-simply-field="login"></span>
+            <span class="role" data-simply-field="role_name"></span>
+          </div>
+        </template>
+      </div>
+    </li>
+  </template>
+</ol>

@@ -1,1 +1,0 @@
-[{"transformer":"teamLink","editor":"code","render-code":"function(data) {\n  this.simplyData = data;\n  return \"#org/\" + editor.pageData.pageParams.organization + \"/team/\" + data;\n}\n","extract-code":"function(data) {\n  return this.simplyData;\n}"}]

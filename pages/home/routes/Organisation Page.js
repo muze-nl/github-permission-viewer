@@ -1,0 +1,62 @@
+function(params) {
+  editor.pageData.pageParams = params;
+  Promise.all([
+    simplyApp.actions.getOrgMembers(params.organization),
+    simplyApp.actions.getOrgTeams(params.organization),
+    simplyApp.actions.getOrgRepos(params.organization),
+  ])
+  .then(function([orgMembers, orgTeams, orgRepos]) {
+    orgTeams.forEach(function(team) {
+      var teamSlug = team.slug;
+      Promise.all([
+        simplyApp.actions.getTeamMembers(params.organization, teamSlug),
+        simplyApp.actions.getTeamRepos(params.organization, teamSlug)
+      ]).then(function([teamMembers, teamRepos]) {
+        teamMembers.forEach(function(teamMember) {
+          orgMembers.forEach(function(orgMember) {
+            if (teamMember.login == orgMember.login) {
+              if (typeof orgMember.teams === "undefined") {
+                orgMember.teams = [];
+              }
+              orgMember.teams.push({
+                "team" : teamSlug
+              });
+            }
+          });
+        });
+
+        teamRepos.forEach(function(teamRepo) {
+          orgRepos.forEach(function(orgRepo) {
+            if (teamRepo.name == orgRepo.name) {
+              if (typeof orgRepo.teams === "undefined") {
+                orgRepo.teams = [];
+              }
+              orgRepo.teams.push({
+                "team" : teamSlug
+              });
+            }
+          });
+        });
+      });
+    });
+    return [orgMembers, orgRepos, orgTeams];
+  })
+  .then(function([orgMembers, orgRepos, orgTeams]) {
+    orgRepos.forEach(function(repo) {
+      var repoSlug = repo.name;
+      var repo = repo;
+      Promise.all([
+        simplyApp.actions.getOrgRepoMembers(params.organization, repoSlug)
+      ]).then(function([repoMembers]) {
+        repo.repoMembers = repoMembers;
+      });
+    });
+    return [orgMembers, orgRepos, orgTeams];
+  })
+  .then(function([orgMembers, orgRepos, orgTeams]) {
+      editor.pageData.orgMembers = orgMembers;
+      editor.pageData.orgRepos = orgRepos;
+      editor.pageData.orgTeams = orgTeams;
+      editor.pageData.page = "home";
+  });
+}

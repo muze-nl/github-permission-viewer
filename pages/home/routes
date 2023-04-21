@@ -1,6 +1,0 @@
-[
-  {
-    "route": "/",
-    "code": "function(params) {\n  editor.pageData.page = \"home\";\n}"
-  }
-]

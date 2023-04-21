@@ -1,0 +1,26 @@
+{
+  "orgRepos" : [
+    {
+      "name" : "Reponame",
+      "teams" : [{"team" : "foo"}, {"team" : "bar"}],
+      "repoMembers" : [
+        {"login" : "user", "role_name": "admin"},
+        {"login" : "user", "role_name": "admin"}
+      ]
+    },
+    {
+      "name" : "Reponame",
+      "teams" : [{"team" : "foo"}, {"team" : "bar"}],
+      "repoMembers" : [
+      ]
+    },
+    {
+      "name" : "Reponame",
+      "teams" : [],
+      "repoMembers" : [
+        {"login" : "user", "role_name": "admin"},
+        {"login" : "user", "role_name": "admin"}
+      ]
+    }
+  ]
+}
