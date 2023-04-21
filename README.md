@@ -14,62 +14,32 @@ As this is a hosted web-app, no install is needed. Just visit https://github-per
 
 Easy as one-two-three:
 
-1. Visit https://github-permissions.dev.muze.nl/
+1. Visit https://muze-nl.github.io/github-permission-viewer
 2. Provide an Organisation name and [personal access token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 3. See who has access to what and why
 
 ## Development
 
-This project is developed in Simply-Code, an experimental low-code environment created by [Muze](https://muze.nl).
+This project is developed in SimplyCode, an experimental low-code environment created by [Muze](https://muze.nl).
 
-All code changes should be made in Simply-Code: https://github-permissions.dev.muze.nl/simply-code/
+All code changes should be made in SimplyCode. This can be done by running the SimplyCode docker image:
 
-At this point, both the development environment and the application itself are committed to this repo.
-
-At a later time, the develop environemnt might be removed, with only the actual application code living here.
-
-The project structure looks like this:
-
-```
-.
-├── lib
-└── www
-    ├── api
-    │   └── data
-    ├── css
-    ├── data
-    ├── files
-    │   └── simply-build
-    ├── img
-    ├── js
-    ├── simply-code
-    └── simply-edit
+```sh
+docker run \
+    --interactive \
+    --rm \
+    --tty \
+    --volume "${PWD}:/var/www/www/api/data" \
+    ghcr.io/simplyedit/simplycode-docker:main
 ```
 
-The majority of these folders are part of Simply-Code.
+The majority of the folders (base-components, components, pages) are created by SimplyCode.
 
-The application specific files ad folders are stored in `www/api/data`:
-
-```
-.
-└── www
-    └── api
-        └── data
-            ├── base-components
-            │   ├── base-styles
-            │   └── raw-api
-            ├── components
-            │   ├── org-members
-            │   ├── org-repos
-            │   └── org-teams
-            └── pages
-                ├── home
-                └── team
-```
+The combined result is stored in the `generated.html` file.
 
 ## Contributing
 
-At this point merge-requests are not expected or accepted, but feel free to [open an issue](https://github.com/muze-nl/github-permission-viewer/issues) to provide usage feedback.
+At this point, merge-requests are not expected or accepted, but feel free to [open an issue](https://github.com/muze-nl/github-permission-viewer/issues) to provide usage feedback.
 
 ## License
 
