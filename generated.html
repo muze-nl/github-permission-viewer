@@ -285,15 +285,7 @@
                     throw new Error("getOrgTeams failed", response.status);
                 });
             },
-            getTeamRepos: function (organization, team) {
-                return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/repos")
-                .then(function (response) {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    throw new Error("getTeamRepos failed", response.status);
-                });
-            },
+
             getTeamMembers: function (organization, team) {
                 return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/members")
                 .then(function (response) {
@@ -301,6 +293,16 @@
                         return response.json();
                     }
                     throw new Error("getTeamMembers failed", response.status);
+                });
+            },
+
+            getTeamRepos: function (organization, team) {
+                return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/repos")
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error("getTeamRepos failed", response.status);
                 });
             }
 
@@ -496,8 +498,7 @@
     <ol class="teams" data-simply-list="orgTeams">
         <template>
             <li class="team">
-                <a href="#" data-simply-field="slug" data-simply-transformer="teamLink" data-simply-content="fixed"><span
-                    data-simply-field="name"></span></a>
+                <a href="#" data-simply-field="slug" data-simply-transformer="teamLink" data-simply-content="fixed"><span data-simply-field="name"></span></a>
             </li>
         </template>
     </ol>
@@ -505,8 +506,7 @@
 
 <!-- /Component HTML templates -->
 
-<header data-simply-path="/" data-simply-field="header" data-simply-content="template"
-    data-simply-default-value="Header">
+<header data-simply-path="/" data-simply-field="header" data-simply-content="template" data-simply-default-value="Header">
     <template data-simply-template="Header" rel="header"></template>
 </header>
 <nav>
@@ -517,6 +517,15 @@
     <!-- Page HTML templates -->
 
     <template data-simply-template="home">
+        <h1>Github permissions</h1>
+        <main>
+            <div class="auth">
+                <h2>Please Authenticate</h2>
+            </div>
+        </main>
+    </template>
+
+    <template data-simply-template="org">
         <h1>Github permissions</h1>
         <main>
             <div class="members">
@@ -562,8 +571,7 @@
             render: function (data) {
                 this.simplyData = data;
                 return "#org/" + editor.pageData.pageParams.organization + "/team/" + data;
-            }
-            ,
+            },
             extract: function (data) {
                 return this.simplyData;
             }
