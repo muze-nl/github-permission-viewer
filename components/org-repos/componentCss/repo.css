@@ -1,20 +1,24 @@
 ol.repos {
   padding: 10px;
 }
+
 ol.repos .repo {
   border-radius: 5px;
   border: 1px solid #aaa;
   overflow: hidden;
   padding: 5px;
 }
+
 ol.repos .repo .teams {
   padding: 10px 0px;
 }
+
 ol.repos .repo .team {
   background-color: #ddd;
   padding: 5px;
-  border-radius: 5px;  
+  border-radius: 5px;
 }
+
 ol.repos .repo .teams.simply-empty:before {
   content: "No team";
   background-color: #f88;
@@ -23,6 +27,7 @@ ol.repos .repo .teams.simply-empty:before {
   display: inline-block;
   margin-bottom: 5px;
 }
+
 ol.repos .repo {
   background-color: #eee;
   margin-bottom: 10px;
@@ -33,19 +38,23 @@ ol.repos .repo .members:not(.simply-empty) {
   padding: 10px;
   border-radius: 5px;
 }
+
 ol.repos .repo .members:not(.simply-empty):before {
   content: "Direct collaborators:";
   display: block;
   background-color: white;
 }
+
 ol.repos .repo .members.simply-empty {
   display: none;
 }
+
 ol.repos .repo .member {
   display: grid;
   grid-template-columns: 1fr 1fr;
   border-bottom: 1px solid #aaa;
 }
+
 ol.repos .repo .member:last-child {
   border-bottom: 0;
 }

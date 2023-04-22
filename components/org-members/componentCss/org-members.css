@@ -1,6 +1,7 @@
 ol.members {
   padding: 10px;
 }
+
 ol.members .member {
   display: grid;
   grid-template-columns: 74px 1fr;
@@ -8,23 +9,28 @@ ol.members .member {
   border: 1px solid #aaa;
   overflow: hidden;
 }
+
 ol.members img.avatar {
   width: 64px;
 }
+
 ol.members .member .teams {
   padding: 10px 0px;
 }
+
 ol.members .member .team {
   background-color: #ddd;
   padding: 5px;
-  border-radius: 5px;  
+  border-radius: 5px;
 }
+
 ol.members .member .teams.simply-empty:before {
   content: "none";
   background-color: #f88;
   padding: 5px;
-  border-radius: 5px;  
+  border-radius: 5px;
 }
+
 ol.members .member {
   background-color: #eee;
   margin-bottom: 10px;

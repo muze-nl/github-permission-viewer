@@ -7,14 +7,14 @@ function(params) {
   ])
   .then(function([orgMembers, orgTeams, orgRepos]) {
     orgTeams.forEach(function(team) {
-      var teamSlug = team.slug;
+      const teamSlug = team.slug;
       Promise.all([
         simplyApp.actions.getTeamMembers(params.organization, teamSlug),
         simplyApp.actions.getTeamRepos(params.organization, teamSlug)
       ]).then(function([teamMembers, teamRepos]) {
         teamMembers.forEach(function(teamMember) {
           orgMembers.forEach(function(orgMember) {
-            if (teamMember.login == orgMember.login) {
+            if (teamMember.login === orgMember.login) {
               if (typeof orgMember.teams === "undefined") {
                 orgMember.teams = [];
               }
@@ -27,7 +27,7 @@ function(params) {
 
         teamRepos.forEach(function(teamRepo) {
           orgRepos.forEach(function(orgRepo) {
-            if (teamRepo.name == orgRepo.name) {
+            if (teamRepo.name === orgRepo.name) {
               if (typeof orgRepo.teams === "undefined") {
                 orgRepo.teams = [];
               }
@@ -43,8 +43,7 @@ function(params) {
   })
   .then(function([orgMembers, orgRepos, orgTeams]) {
     orgRepos.forEach(function(repo) {
-      var repoSlug = repo.name;
-      var repo = repo;
+      const repoSlug = repo.name;
       Promise.all([
         simplyApp.actions.getOrgRepoMembers(params.organization, repoSlug)
       ]).then(function([repoMembers]) {
