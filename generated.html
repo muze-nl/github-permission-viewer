@@ -105,6 +105,40 @@
         border-bottom: 0;
     }
 
+    /* orgs */
+    /* orgs */
+    ol.orgs {
+        padding: 10px;
+    }
+
+    ol.orgs li {
+        list-style: none;
+    }
+
+    ol.orgs a {
+        text-decoration: none;
+    }
+
+    ol.orgs .org {
+        display: grid;
+        grid-template-columns: 74px 1fr;
+        border-radius: 5px;
+        border: 1px solid #aaa;
+        overflow: hidden;
+        background-color: #eee;
+        margin-bottom: 10px;
+    }
+
+    ol.orgs img.avatar {
+        width: 64px;
+    }
+
+    ol.orgs .org .name {
+        color: #333;
+        font-size: 150%;
+        line-height: 200%;
+        padding-top: 10px;
+    }
 </style>
 <!-- /Component CSS -->
 <!-- Page CSS -->
@@ -223,6 +257,9 @@
                 .then(function (response) {
                     if (response.status === 200) {
                         return response.json();
+                    } else if (response.status === 404) {
+                        // If the repo does not have collaborators, a 404 is given. Ignore.
+                        return [];
                     }
                     throw new Error("getOrgRepoMembers failed", response.status);
                 });
@@ -279,6 +316,15 @@
                     }
                     throw new Error("getTeamRepos failed", response.status);
                 });
+            },
+            getOrgs: function () {
+                return simplyRawApi.get("/user/orgs")
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error("getOrgs failed", response.status);
+                });
             }
         };
         /* End of Data API */
@@ -302,11 +348,23 @@
                 },
                 getTeamRepos: function (organization, team) {
                     return simplyDataApi.getTeamRepos(organization, team);
+                },
+                getOrgs: function () {
+                    return simplyDataApi.getOrgs();
                 }
             },
             /* /Actions */
             /* Commands */
-            commands: {},
+            commands: {
+                storeAuth: function (form, values) {
+                    simplyRawApi.headers.Authorization = 'token ' + values['github-pat']
+                    return simplyApp.actions.getOrgs()
+                    .then(function (orgs) {
+                        // @TODO: Sort orgs alphabetically
+                        editor.pageData.orgs = orgs;
+                    });
+                }
+            },
             /* /Commands */
             /* Routes */
             routes: {
@@ -330,14 +388,14 @@
                     ])
                     .then(function ([orgMembers, orgTeams, orgRepos]) {
                         orgTeams.forEach(function (team) {
-                            var teamSlug = team.slug;
+                            const teamSlug = team.slug;
                             Promise.all([
                                 simplyApp.actions.getTeamMembers(params.organization, teamSlug),
                                 simplyApp.actions.getTeamRepos(params.organization, teamSlug)
                             ]).then(function ([teamMembers, teamRepos]) {
                                 teamMembers.forEach(function (teamMember) {
                                     orgMembers.forEach(function (orgMember) {
-                                        if (teamMember.login == orgMember.login) {
+                                        if (teamMember.login === orgMember.login) {
                                             if (typeof orgMember.teams === "undefined") {
                                                 orgMember.teams = [];
                                             }
@@ -349,7 +407,7 @@
                                 });
                                 teamRepos.forEach(function (teamRepo) {
                                     orgRepos.forEach(function (orgRepo) {
-                                        if (teamRepo.name == orgRepo.name) {
+                                        if (teamRepo.name === orgRepo.name) {
                                             if (typeof orgRepo.teams === "undefined") {
                                                 orgRepo.teams = [];
                                             }
@@ -365,8 +423,7 @@
                     })
                     .then(function ([orgMembers, orgRepos, orgTeams]) {
                         orgRepos.forEach(function (repo) {
-                            var repoSlug = repo.name;
-                            var repo = repo;
+                            const repoSlug = repo.name;
                             Promise.all([
                                 simplyApp.actions.getOrgRepoMembers(params.organization, repoSlug)
                             ]).then(function ([repoMembers]) {
@@ -379,7 +436,7 @@
                         editor.pageData.orgMembers = orgMembers;
                         editor.pageData.orgRepos = orgRepos;
                         editor.pageData.orgTeams = orgTeams;
-                        editor.pageData.page = "home";
+                        editor.pageData.page = "org";
                     });
                 },
                 "/": function (params) {
@@ -454,7 +511,24 @@
         </template>
     </ol>
 </template>
-
+<template id="orgs">
+    <!-- @TODO: Add filter field, so user can more easily find their org -->
+    <ol class="orgs" data-simply-list="orgs">
+        <template>
+            <li>
+                <a class="org"
+                    href="#"
+                    data-simply-field="login"
+                    data-simply-transformer="orgLink"
+                    data-simply-content="fixed"
+                >
+                    <img class="avatar" src="" data-simply-field="avatar_url">
+                    <span class="name" data-simply-field="login"></span>
+                </a>
+            </li>
+        </template>
+    </ol>
+</template>
 <!-- /Component HTML templates -->
 <header data-simply-path="/" data-simply-field="header" data-simply-content="template" data-simply-default-value="Header">
     <template data-simply-template="Header" rel="header"></template>
@@ -465,15 +539,30 @@
 <div class="main" data-simply-field="page" data-simply-content="template">
     <!-- Page HTML templates -->
     <template data-simply-template="home">
-        <h1>Github permissions</h1>
+        <h1><a href="#">Github permissions</a></h1>
         <main>
+            <!-- @FIXME: When landing on a sub-page without a PAT given, ask for the PAT before rest of logic is handled! -->
+            <!-- @TODO: This should be a separate template, so it can be used from any page -->
+            <!-- @TODO: This should be collapsible so it is not shown when already filled-->
+            <!-- @TODO: This should be filled if value has already been given-->
             <div class="auth">
-                <h2>Please Authenticate</h2>
+                <h2>Please Authenticate Yourself</h2>
+                <form data-simply-command="storeAuth" method="post">
+                    <label>
+                        Person Authentication Token (PAT)
+                        <input type="text" id="github-pat" name="github-pat" data-simply-field="auth">
+                    </label>
+                    <button>Fetch Organizations</button>
+                </form>
+            </div>
+            <div class="members">
+                <h2>Organizations</h2>
+                <div is="simply-component" rel="orgs"></div>
             </div>
         </main>
     </template>
     <template data-simply-template="org">
-        <h1>Github permissions</h1>
+        <h1><a href="#">Github permissions</a></h1>
         <main>
             <div class="members">
                 <h2>Organization Members</h2>
@@ -490,7 +579,7 @@
         </main>
     </template>
     <template data-simply-template="team">
-        <h1>Github permissions</h1>
+        <h1><a href="#">Github permissions</a></h1>
         <main>
             <div class="members">
                 <h2>Team Members</h2>
@@ -513,6 +602,15 @@
             render: function (data) {
                 this.simplyData = data;
                 return "#org/" + editor.pageData.pageParams.organization + "/team/" + data;
+            },
+            extract: function (data) {
+                return this.simplyData;
+            }
+        },
+        "orgLink": {
+            render: function (data) {
+                this.simplyData = data;
+                return "#org/" + data;
             },
             extract: function (data) {
                 return this.simplyData;
