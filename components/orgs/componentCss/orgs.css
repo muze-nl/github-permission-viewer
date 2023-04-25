@@ -1,0 +1,33 @@
+    /* orgs */
+    ol.orgs {
+        padding: 10px;
+    }
+
+    ol.orgs li {
+        list-style: none;
+    }
+
+    ol.orgs a {
+        text-decoration: none;
+    }
+
+    ol.orgs .org {
+        display: grid;
+        grid-template-columns: 74px 1fr;
+        border-radius: 5px;
+        border: 1px solid #aaa;
+        overflow: hidden;
+        background-color: #eee;
+        margin-bottom: 10px;
+    }
+
+    ol.orgs img.avatar {
+        width: 64px;
+    }
+
+    ol.orgs .org .name {
+        color: #333;
+        font-size: 150%;
+        line-height: 200%;
+        padding-top: 10px;
+    }

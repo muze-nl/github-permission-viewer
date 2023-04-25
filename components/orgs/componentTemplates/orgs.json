@@ -1,0 +1,60 @@
+{
+  "orgs": [
+    {
+      "login": "Ariadne-CMS",
+      "id": 1397864,
+      "node_id": "MDEyOk9yZ2FuaXphdGlvbjEzOTc4NjQ=",
+      "url": "https://api.github.com/orgs/Ariadne-CMS",
+      "repos_url": "https://api.github.com/orgs/Ariadne-CMS/repos",
+      "events_url": "https://api.github.com/orgs/Ariadne-CMS/events",
+      "hooks_url": "https://api.github.com/orgs/Ariadne-CMS/hooks",
+      "issues_url": "https://api.github.com/orgs/Ariadne-CMS/issues",
+      "members_url": "https://api.github.com/orgs/Ariadne-CMS/members{/member}",
+      "public_members_url": "https://api.github.com/orgs/Ariadne-CMS/public_members{/member}",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1397864?v=4",
+      "description": null
+    },
+    {
+      "login": "muze-nl",
+      "id": 1654999,
+      "node_id": "MDEyOk9yZ2FuaXphdGlvbjE2NTQ5OTk=",
+      "url": "https://api.github.com/orgs/muze-nl",
+      "repos_url": "https://api.github.com/orgs/muze-nl/repos",
+      "events_url": "https://api.github.com/orgs/muze-nl/events",
+      "hooks_url": "https://api.github.com/orgs/muze-nl/hooks",
+      "issues_url": "https://api.github.com/orgs/muze-nl/issues",
+      "members_url": "https://api.github.com/orgs/muze-nl/members{/member}",
+      "public_members_url": "https://api.github.com/orgs/muze-nl/public_members{/member}",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1654999?v=4",
+      "description": ""
+    },
+    {
+      "login": "SimplyEdit",
+      "id": 15869040,
+      "node_id": "MDEyOk9yZ2FuaXphdGlvbjE1ODY5MDQw",
+      "url": "https://api.github.com/orgs/SimplyEdit",
+      "repos_url": "https://api.github.com/orgs/SimplyEdit/repos",
+      "events_url": "https://api.github.com/orgs/SimplyEdit/events",
+      "hooks_url": "https://api.github.com/orgs/SimplyEdit/hooks",
+      "issues_url": "https://api.github.com/orgs/SimplyEdit/issues",
+      "members_url": "https://api.github.com/orgs/SimplyEdit/members{/member}",
+      "public_members_url": "https://api.github.com/orgs/SimplyEdit/public_members{/member}",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15869040?v=4",
+      "description": "SimplyEdit is the first content management system designed for the decentralized web. Not decentralized yet? No worries, it works fine on the centralized web!"
+    },
+    {
+      "login": "pdsinterop",
+      "id": 65920341,
+      "node_id": "MDEyOk9yZ2FuaXphdGlvbjY1OTIwMzQx",
+      "url": "https://api.github.com/orgs/pdsinterop",
+      "repos_url": "https://api.github.com/orgs/pdsinterop/repos",
+      "events_url": "https://api.github.com/orgs/pdsinterop/events",
+      "hooks_url": "https://api.github.com/orgs/pdsinterop/hooks",
+      "issues_url": "https://api.github.com/orgs/pdsinterop/issues",
+      "members_url": "https://api.github.com/orgs/pdsinterop/members{/member}",
+      "public_members_url": "https://api.github.com/orgs/pdsinterop/public_members{/member}",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65920341?v=4",
+      "description": "Interoperability between Personal Data Stores"
+    }
+  ]
+}

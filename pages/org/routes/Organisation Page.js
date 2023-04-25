@@ -56,6 +56,6 @@ function(params) {
       editor.pageData.orgMembers = orgMembers;
       editor.pageData.orgRepos = orgRepos;
       editor.pageData.orgTeams = orgTeams;
-      editor.pageData.page = "home";
+      editor.pageData.page = "org";
   });
 }
