@@ -1,6 +1,22 @@
-<h1>Github permissions</h1>
+<h1><a href="#">Github permissions</a></h1>
 <main>
+  <!-- @FIXME: When landing on a sub-page without a PAT given, ask for the PAT before rest of logic is handled! -->
+  <!-- @TODO: This should be a separate template, so it can be used from any page -->
+  <!-- @TODO: This should be collapsible so it is not shown when already filled-->
+  <!-- @TODO: This should be filled if value has already been given-->
   <div class="auth">
-    <h2>Please Authenticate</h2>
+    <h2>Please Authenticate Yourself</h2>
+    <form data-simply-command="storeAuth" method="post">
+      <label>
+        Person Authentication Token (PAT)
+        <input type="text" id="github-pat" name="github-pat" data-simply-field="auth">
+      </label>
+      <button>Fetch Organizations</button>
+    </form>
+  </div>
+
+  <div class="members">
+    <h2>Organizations</h2>
+    <div is="simply-component" rel="orgs"></div>
   </div>
 </main>
