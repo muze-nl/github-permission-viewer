@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <!-- Component CSS -->
 <style>
-
     /* org-members */
     ol.members {
         padding: 10px;
@@ -108,15 +107,11 @@
 
 </style>
 <!-- /Component CSS -->
-
 <!-- Page CSS -->
 <style>
-
 </style>
 <!-- /Page CSS -->
-
 <!-- Head HTML -->
-
 <!-- base styles -->
 <style>
     body {
@@ -140,18 +135,14 @@
         margin: 10px;
     }
 </style>
-
 <!-- /Head HTML -->
-
 <script>
     var simplyDataApi = {};
     var simplyApp = {};
     window.addEventListener("simply-content-loaded", function () {
         simply.bind = false;
-
         /* Raw API */
         var simplyRawApi = {
-
             delete: function (endpoint, params = {}) {
                 return fetch(simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params), {
                     mode: 'cors',
@@ -159,7 +150,6 @@
                     method: "DELETE"
                 });
             },
-
             encodeGetParams: function (params) {
                 if ( ! params) {
                     return "";
@@ -168,20 +158,17 @@
                     return keyvalue.map(encodeURIComponent).join("=")
                 }).join("&"));
             },
-
             get: function (endpoint, params = {}) {
                 return fetch(simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params), {
                     mode: 'cors',
                     headers: this.headers
                 });
             },
-
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'Authorization': 'token ghp_0abc1def2ghi3jkl4mno5pqr6stu7vwx8yz9'
             },
-
             post: function (endpoint, params = {}) {
                 return fetch(simplyRawApi.url + endpoint, {
                     mode: 'cors',
@@ -190,7 +177,6 @@
                     body: JSON.stringify(params, null, "\t")
                 });
             },
-
             postRaw: function (endpoint, params = {}, body) {
                 return fetch(simplyRawApi.url + endpoint, {
                     mode: 'cors',
@@ -199,7 +185,6 @@
                     body: body
                 });
             },
-
             put: function (endpoint, params = {}) {
                 return fetch(simplyRawApi.url + endpoint, {
                     mode: 'cors',
@@ -208,7 +193,6 @@
                     body: JSON.stringify(params, null, "\t")
                 });
             },
-
             putRaw: function (endpoint, params = {}, body) {
                 return fetch(simplyRawApi.url + endpoint, {
                     mode: 'cors',
@@ -217,15 +201,11 @@
                     body: body
                 });
             },
-
             url: "https://api.github.com"
-
         };
         /* End of Raw API */
-
         /* Data API */
         simplyDataApi = {
-
             getOrgMembers: function (organization) {
                 return simplyRawApi.get("/orgs/" + organization + "/members")
                 .then(function (response) {
@@ -235,7 +215,6 @@
                     throw new Error("getMembers failed", response.status);
                 });
             },
-
             getOrgRepoMembers: function (organization, repo) {
                 return simplyRawApi.get("/repos/" + organization + "/" + repo + "/collaborators", {
                     "affiliation": "direct",
@@ -248,7 +227,6 @@
                     throw new Error("getOrgRepoMembers failed", response.status);
                 });
             },
-
             getOrgRepos: function (organization) {
                 // FIXME: Add handling for paging;
                 /*
@@ -275,7 +253,6 @@
                     throw new Error("getOrgRepos failed", response.status);
                 });
             },
-
             getOrgTeams: function (organization) {
                 return simplyRawApi.get("/orgs/" + organization + "/teams")
                 .then(function (response) {
@@ -285,7 +262,6 @@
                     throw new Error("getOrgTeams failed", response.status);
                 });
             },
-
             getTeamMembers: function (organization, team) {
                 return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/members")
                 .then(function (response) {
@@ -295,7 +271,6 @@
                     throw new Error("getTeamMembers failed", response.status);
                 });
             },
-
             getTeamRepos: function (organization, team) {
                 return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/repos")
                 .then(function (response) {
@@ -305,49 +280,36 @@
                     throw new Error("getTeamRepos failed", response.status);
                 });
             }
-
         };
         /* End of Data API */
-
         simplyApp = simply.app({
-
             /* Actions */
             actions: {
-
                 getOrgMembers: function (organization) {
                     return simplyDataApi.getOrgMembers(organization);
                 },
-
                 getOrgRepoMembers: function (organization, repo) {
                     return simplyDataApi.getOrgRepoMembers(organization, repo);
                 },
-
                 getOrgRepos: function (organization) {
                     return simplyDataApi.getOrgRepos(organization);
                 },
-
                 getOrgTeams: function (organization) {
                     return simplyDataApi.getOrgTeams(organization);
                 },
-
                 getTeamMembers: function (organization, team) {
                     return simplyDataApi.getTeamMembers(organization, team);
                 },
-
                 getTeamRepos: function (organization, team) {
                     return simplyDataApi.getTeamRepos(organization, team);
                 }
-
             },
             /* /Actions */
-
             /* Commands */
             commands: {},
             /* /Commands */
-
             /* Routes */
             routes: {
-
                 "#org/:organization/team/:team": function (params) {
                     editor.pageData.pageParams = params;
                     return Promise.all([
@@ -359,7 +321,6 @@
                         editor.pageData.page = "team";
                     });
                 },
-
                 "#org/:organization": function (params) {
                     editor.pageData.pageParams = params;
                     Promise.all([
@@ -421,14 +382,11 @@
                         editor.pageData.page = "home";
                     });
                 },
-
                 "/": function (params) {
                     editor.pageData.page = "home";
                 }
-
             }
             /* /Routes */
-
         });
 
         function clone(ob) {
@@ -441,18 +399,13 @@
                 list.dataBindingPaused = 0;
             });
         }
-
     });
 </script>
 </head>
 <body>
-
 <!-- Body HTML -->
-
 <!-- /Body HTML -->
-
 <!-- Component HTML templates -->
-
 <template id="org-members">
     <ol class="members" data-simply-list="orgMembers">
         <template>
@@ -470,7 +423,6 @@
         </template>
     </ol>
 </template>
-
 <template id="org-repos">
     <ol class="repos" data-simply-list="orgRepos">
         <template>
@@ -493,7 +445,6 @@
         </template>
     </ol>
 </template>
-
 <template id="org-teams">
     <ol class="teams" data-simply-list="orgTeams">
         <template>
@@ -505,7 +456,6 @@
 </template>
 
 <!-- /Component HTML templates -->
-
 <header data-simply-path="/" data-simply-field="header" data-simply-content="template" data-simply-default-value="Header">
     <template data-simply-template="Header" rel="header"></template>
 </header>
@@ -513,9 +463,7 @@
     <div is="simply-component" rel="menu"></div>
 </nav>
 <div class="main" data-simply-field="page" data-simply-content="template">
-
     <!-- Page HTML templates -->
-
     <template data-simply-template="home">
         <h1>Github permissions</h1>
         <main>
@@ -524,7 +472,6 @@
             </div>
         </main>
     </template>
-
     <template data-simply-template="org">
         <h1>Github permissions</h1>
         <main>
@@ -542,7 +489,6 @@
             </div>
         </main>
     </template>
-
     <template data-simply-template="team">
         <h1>Github permissions</h1>
         <main>
@@ -556,17 +502,13 @@
             </div>
         </main>
     </template>
-
     <!-- /Page HTML templates -->
-
 </div>
 <script src="js/simply.everything.js"></script>
 <script src="js/simply-edit.js" data-api-key="muze"></script>
-
 <script>
     /* Transformers */
     editor.transformers = {
-
         "teamLink": {
             render: function (data) {
                 this.simplyData = data;
@@ -576,26 +518,19 @@
                 return this.simplyData;
             }
         }
-
     };
     /* /Transformers */
 </script>
-
 <script>
     // load sorters
 </script>
-
 <script>
     window.addEventListener("simply-content-loaded", function () {
         /* Data sources */
-
         /* /Data sources */
     });
 </script>
-
 <!-- Foot HTML -->
-
 <!-- /Foot HTML -->
-
 </body>
 </html>
