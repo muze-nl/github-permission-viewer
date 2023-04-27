@@ -4,17 +4,19 @@ function (endpoint, params = {}) {
   function getNextPageUrl(headers) {
     const link = headers.get("link")
 
+    let url = null
+
     if (link) {
       const linkInfo = link.split(",")
       linkInfo.forEach(function (linkItem) {
         const parts = linkItem.split(";")
         if (parts[1].trim() === 'rel="next"') {
-          return parts[0].replace("<", "").replace(">", "")
+          url = parts[0].replace("<", "").replace(">", "")
         }
       })
-    } else {
-      return null
     }
+
+    return url
   }
 
   function getAll(url, responses) {
