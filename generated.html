@@ -210,17 +210,17 @@
 
                 function getNextPageUrl(headers) {
                     const link = headers.get("link")
+                    let url = null
                     if (link) {
                         const linkInfo = link.split(",")
                         linkInfo.forEach(function (linkItem) {
                             const parts = linkItem.split(";")
                             if (parts[1].trim() === 'rel="next"') {
-                                return parts[0].replace("<", "").replace(">", "")
+                                url = parts[0].replace("<", "").replace(">", "")
                             }
                         })
-                    } else {
-                        return null
                     }
+                    return url
                 }
 
                 function getAll(url, responses) {
@@ -247,6 +247,7 @@
                     })
                 }
 
+                params.per_page = params.per_page || 100
                 let url = simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params)
                 return getAll(url)
             },
@@ -297,8 +298,7 @@
             },
             getOrgRepoMembers: function (organization, repo) {
                 return simplyRawApi.getAll("/repos/" + organization + "/" + repo + "/collaborators", {
-                    "affiliation": "direct",
-                    "per_page": 100
+                    "affiliation": "direct"
                 }).catch(function (error) {
                     if (error.response.status === 404) {
                         // If the repo does not have collaborators, a 404 is given. Ignore.
@@ -312,7 +312,7 @@
                 })
             },
             getOrgRepos: function (organization) {
-                return simplyRawApi.getAll("/orgs/" + organization + "/repos", {"per_page": 100})
+                return simplyRawApi.getAll("/orgs/" + organization + "/repos")
             },
             getOrgTeams: function (organization) {
                 return simplyRawApi.getAll("/orgs/" + organization + "/teams")
