@@ -46,6 +46,7 @@ function (endpoint, params = {}) {
     })
   }
 
+  params.per_page = params.per_page || 100
   let url = simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params)
 
   return getAll(url)
