@@ -48,6 +48,18 @@ function(params) {
         simplyApp.actions.getOrgRepoMembers(params.organization, repoSlug)
       ]).then(function([repoMembers]) {
         repo.repoMembers = repoMembers;
+      }).catch(function(error) {
+        repo.repoMembers = [];
+        if (error.response && error.response.json) {
+          error.response.json().then(function(json) {
+            if (json.message) {
+              // @FIXME: Replace `alert()` with actual error messaging
+              alert(`Could not fetch collaborators for "${repoSlug}": ${json.message}`);
+            }
+          });
+        } else {
+          alert(`Could not fetch collaborators for "${repoSlug}": ${error.message}`);
+        }
       });
     });
     return [orgMembers, orgRepos, orgTeams];
