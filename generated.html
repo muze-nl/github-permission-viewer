@@ -196,7 +196,59 @@
                 return fetch(simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params), {
                     mode: 'cors',
                     headers: this.headers
-                });
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw {message: "get failed", response}
+                    }
+                })
+            }
+            ,
+            getAll: function (endpoint, params = {}) {
+                const requestHeaders = this.headers;
+
+                function getNextPageUrl(headers) {
+                    const link = headers.get("link")
+                    if (link) {
+                        const linkInfo = link.split(",")
+                        linkInfo.forEach(function (linkItem) {
+                            const parts = linkItem.split(";")
+                            if (parts[1].trim() === 'rel="next"') {
+                                return parts[0].replace("<", "").replace(">", "")
+                            }
+                        })
+                    } else {
+                        return null
+                    }
+                }
+
+                function getAll(url, responses) {
+                    responses = responses || []
+                    return fetch(url, {
+                        mode: 'cors',
+                        headers: requestHeaders
+                    })
+                    .then(async function (response) {
+                        if (response.ok) {
+                            const url = getNextPageUrl(response.headers)
+                            return {json: await response.json(), url}
+                        } else {
+                            throw {message: "getAll failed", response}
+                        }
+                    })
+                    .then(function ({json, url}) {
+                        responses.push(...json)
+                        if (url) {
+                            return getAll(url, responses)
+                        } else {
+                            return responses
+                        }
+                    })
+                }
+
+                let url = simplyRawApi.url + endpoint + simplyRawApi.encodeGetParams(params)
+                return getAll(url)
             },
             headers: {
                 'Accept': 'application/json',
@@ -241,90 +293,38 @@
         /* Data API */
         simplyDataApi = {
             getOrgMembers: function (organization) {
-                return simplyRawApi.get("/orgs/" + organization + "/members")
-                .then(function (response) {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    throw new Error("getMembers failed", response.status);
-                });
+                return simplyRawApi.getAll("/orgs/" + organization + "/members")
             },
             getOrgRepoMembers: function (organization, repo) {
-                return simplyRawApi.get("/repos/" + organization + "/" + repo + "/collaborators", {
+                return simplyRawApi.getAll("/repos/" + organization + "/" + repo + "/collaborators", {
                     "affiliation": "direct",
                     "per_page": 100
-                })
-                .then(function (response) {
-                    if (response.status === 200) {
-                        return response.json();
-                    } else if (response.status === 404) {
+                }).catch(function (error) {
+                    if (error.response.status === 404) {
                         // If the repo does not have collaborators, a 404 is given. Ignore.
                         return [];
+                    } else {
+                        throw {
+                            message: "getOrgRepoMembers failed",
+                            response: error.response
+                        }
                     }
-                    throw new Error("getOrgRepoMembers failed", response.status);
-                });
+                })
             },
             getOrgRepos: function (organization) {
-                // FIXME: Add handling for paging;
-                /*
-                  .then(function(response) {
-                  let link = response.headers.get("link");
-                  if (link) {
-                    let linkInfo = link.split(",");
-                    linkInfo.forEach(function(linkItem) {
-                      let parts = linkItem.split(";");
-                      if (parts[1].trim() == 'rel="next"') {
-                        let url = parts[0].replace("<", "").replace(">", "");
-                        alert(url);
-                      }
-                    });
-                  }
-                  return response;
-                })
-              */
-                return simplyRawApi.get("/orgs/" + organization + "/repos", {"per_page": 100})
-                .then(function (response) {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    throw new Error("getOrgRepos failed", response.status);
-                });
+                return simplyRawApi.getAll("/orgs/" + organization + "/repos", {"per_page": 100})
             },
             getOrgTeams: function (organization) {
-                return simplyRawApi.get("/orgs/" + organization + "/teams")
-                .then(function (response) {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    throw new Error("getOrgTeams failed", response.status);
-                });
+                return simplyRawApi.getAll("/orgs/" + organization + "/teams")
             },
             getTeamMembers: function (organization, team) {
-                return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/members")
-                .then(function (response) {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    throw new Error("getTeamMembers failed", response.status);
-                });
+                return simplyRawApi.getAll("/orgs/" + organization + "/teams/" + team + "/members")
             },
             getTeamRepos: function (organization, team) {
-                return simplyRawApi.get("/orgs/" + organization + "/teams/" + team + "/repos")
-                .then(function (response) {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    throw new Error("getTeamRepos failed", response.status);
-                });
+                return simplyRawApi.getAll("/orgs/" + organization + "/teams/" + team + "/repos")
             },
             getOrgs: function () {
-                return simplyRawApi.get("/user/orgs")
-                .then(function (response) {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    throw new Error("getOrgs failed", response.status);
-                });
+                return simplyRawApi.getAll("/user/orgs")
             }
         };
         /* End of Data API */
@@ -428,6 +428,18 @@
                                 simplyApp.actions.getOrgRepoMembers(params.organization, repoSlug)
                             ]).then(function ([repoMembers]) {
                                 repo.repoMembers = repoMembers;
+                            }).catch(function (error) {
+                                repo.repoMembers = [];
+                                if (error.response && error.response.json) {
+                                    error.response.json().then(function (json) {
+                                        if (json.message) {
+                                            // @FIXME: Replace `alert()` with actual error messaging
+                                            alert(`Could not fetch collaborators for "${repoSlug}": ${json.message}`);
+                                        }
+                                    });
+                                } else {
+                                    alert(`Could not fetch collaborators for "${repoSlug}": ${error.message}`);
+                                }
                             });
                         });
                         return [orgMembers, orgRepos, orgTeams];
@@ -629,6 +641,13 @@
     });
 </script>
 <!-- Foot HTML -->
+<!-- errorHandler -->
+<script>
+    window.addEventListener("error", (event) => {
+        // @FIXME: Replace `alert()` with actual error messaging
+        alert(`An error occurred which the application did not handle: ${event}`);
+    });
+</script>
 <!-- /Foot HTML -->
 </body>
 </html>
