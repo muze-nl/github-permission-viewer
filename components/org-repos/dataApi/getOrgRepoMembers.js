@@ -1,15 +1,16 @@
-function(organization, repo) {
-  return simplyRawApi.get("/repos/" + organization + "/" + repo + "/collaborators", {
-    "affiliation" : "direct",
-    "per_page" : 100
-  })
-  .then(function(response) {
-    if (response.status === 200) {
-      return response.json();
-    } else if (response.status === 404) {
+function (organization, repo) {
+  return simplyRawApi.getAll("/repos/" + organization + "/" + repo + "/collaborators", {
+    "affiliation": "direct",
+    "per_page": 100
+  }).catch(function (error) {
+    if (error.response.status === 404) {
       // If the repo does not have collaborators, a 404 is given. Ignore.
       return [];
+    } else {
+      throw {
+        message: "getOrgRepoMembers failed",
+        response: error.response
+      }
     }
-    throw new Error("getOrgRepoMembers failed", response.status);
-  });
+  })
 }
