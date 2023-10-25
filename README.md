@@ -8,7 +8,7 @@ _See who has access to what and why for a GitHub organisation_
 
 ## Install
 
-As this is a hosted web-app, no install is needed. Just visit https://github-permissions.dev.muze.nl/
+As this is a hosted web-app, no install is needed. Just visit https://muze-nl.github.io/github-permission-viewer/
 
 ## Usage
 
