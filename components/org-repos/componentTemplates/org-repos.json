@@ -21,6 +21,11 @@
         {"login" : "user", "role_name": "admin"},
         {"login" : "user", "role_name": "admin"}
       ]
+    },
+    {
+      "archived" : true,
+      "name" : "Archived Repo",
+      "teams" : [{"team" : "foo"}, {"team" : "bar"}]
     }
   ]
 }
