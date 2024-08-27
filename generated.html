@@ -79,6 +79,14 @@
         margin-bottom: 10px;
     }
 
+    ol.repos .repo[data-archived="true"] {
+      opacity: 0.5;
+    }
+
+    ol.repos .repo[data-archived="true"] h3:after {
+      content: "(archived)";
+    }
+
     ol.repos .repo .members:not(.simply-empty) {
         background-color: white;
         padding: 10px;
@@ -495,7 +503,11 @@
 <template id="org-repos">
     <ol class="repos" data-simply-list="orgRepos">
         <template>
-            <li class="repo">
+            <li class="repo"
+                data-simply-field="archived"
+                data-simply-content="attributes"
+                data-simply-attributes="data-archived"
+            >
                 <h3 data-simply-field="name"></h3>
                 <div class="teams" data-simply-list="teams">
                     <template>
