@@ -33,7 +33,7 @@ ol.repos .repo {
   margin-bottom: 10px;
 }
 
-ol.repos .repo[data-archived] {
+ol.repos .repo[data-archived="true"] {
   opacity: 0.5;
 }
 
