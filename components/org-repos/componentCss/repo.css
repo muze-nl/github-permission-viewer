@@ -33,6 +33,14 @@ ol.repos .repo {
   margin-bottom: 10px;
 }
 
+ol.repos .repo[data-archived] {
+  opacity: 0.5;
+}
+
+ol.repos .repo[data-archived] h3:after {
+  content: "(archived)";
+}
+
 ol.repos .repo .members:not(.simply-empty) {
   background-color: white;
   padding: 10px;
